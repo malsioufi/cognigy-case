@@ -1,0 +1,11 @@
+{
+  "name": "cognigy-case",
+  "version": "1.0.0",
+  "description": "Technical test for backend developer role at Cognigy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohamad Alsioufi",
+  "license": "MIT"
+}
