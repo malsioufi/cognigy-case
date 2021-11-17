@@ -1,8 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import routers from './routes/car.routes';
 
 import { dbURL } from './config/db.config';
+import appRouter from './routes';
 
 const PORT = 3000;
 
@@ -20,7 +20,7 @@ mongoose
     process.exit();
   });
 
-routers(app);
+app.use(appRouter);
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);

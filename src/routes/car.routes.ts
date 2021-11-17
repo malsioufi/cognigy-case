@@ -1,14 +1,16 @@
+import { Router } from 'express';
 import { create, findAll, findOne, remove, update } from '../controllers/car.controller';
 
-const routers = (app) => {
-  app.post('/cars', create);
+const carRouter = Router();
 
-  app.get('/cars', findAll);
+carRouter.post('/', create);
 
-  app.get('/cars/:CarId', findOne);
+carRouter.get('/', findAll);
 
-  app.put('/cars/:CarId', update);
+carRouter.get('/:id', findOne);
 
-  app.delete('/cars/:CarId', remove);
-};
-export default routers;
+carRouter.put('/:id', update);
+
+carRouter.delete('/:id', remove);
+
+export default carRouter;
