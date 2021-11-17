@@ -29,8 +29,16 @@ export const create = (req: Request, res: Response) => {
     });
 };
 
-// Read meta-data of all cars in the system.
-export const findAll = (req, res) => {};
+export const findAll = (req: Request, res: Response) => {
+  CarModel.find()
+    .then((cars) => {
+      res.send(cars);
+    })
+    .catch((err) => {
+      const errorMessage = err.message || 'Some error occurred while retrieving cars.';
+      sendError(res, errorMessage, 500);
+    });
+};
 
 // Read the full data of an individual car.
 export const findOne = (req, res) => {};
