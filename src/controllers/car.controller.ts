@@ -1,7 +1,33 @@
-import Car from '../models/car.model';
+import { Request, Response } from 'express';
+import CarModel from '../models/car.model';
+import { sendError } from '../utils';
 
-// Create a new car.
-export const creat = (req, res) => {};
+export const create = (req: Request, res: Response) => {
+  const { body } = req;
+  if (!body) {
+    return sendError(res, 'Car content can not be empty');
+  }
+
+  const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
+
+  const car = new CarModel({
+    brand,
+    model,
+    color,
+    countryOfOrigin,
+    yearOfCreation
+  });
+
+  car
+    .save()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      const errorMessage = err.message || 'Some error occurred while creating the Car.';
+      sendError(res, errorMessage, 500);
+    });
+};
 
 // Read meta-data of all cars in the system.
 export const findAll = (req, res) => {};

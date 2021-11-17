@@ -7,6 +7,7 @@ import { dbURL } from './config/db.config';
 const PORT = 3000;
 
 const app = express();
+app.use(express.json());
 
 mongoose.Promise = global.Promise;
 mongoose

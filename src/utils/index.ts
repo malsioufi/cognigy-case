@@ -1,0 +1,1 @@
+export { sendError } from './response';

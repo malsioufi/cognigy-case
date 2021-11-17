@@ -1,7 +1,7 @@
-import { creat, findAll, findOne, remove, update } from '../controllers/car.controller';
+import { create, findAll, findOne, remove, update } from '../controllers/car.controller';
 
 const routers = (app) => {
-  app.post('/cars', creat);
+  app.post('/cars', create);
 
   app.get('/cars', findAll);
 

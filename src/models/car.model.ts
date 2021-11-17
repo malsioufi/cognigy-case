@@ -1,8 +1,15 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const CarSchema = new mongoose.Schema(
+interface Car {
+  brand: string;
+  model: string;
+  color: string;
+  countryOfOrigin: string;
+  yearOfCreation: number;
+}
+
+const schama = new Schema<Car>(
   {
-    id: Number,
     brand: String,
     model: String,
     color: String,
@@ -14,5 +21,6 @@ const CarSchema = new mongoose.Schema(
   }
 );
 
-const Car = mongoose.model('Car', CarSchema);
-export default Car;
+const CarModel = model<Car>('Car', schama);
+
+export default CarModel;
