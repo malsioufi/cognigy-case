@@ -40,8 +40,26 @@ export const findAll = (req: Request, res: Response) => {
     });
 };
 
-// Read the full data of an individual car.
-export const findOne = (req, res) => {};
+export const findOne = (req: Request, res: Response) => {
+  const { id } = req.params;
+  CarModel.findById(id)
+    .then((car) => {
+      if (!car) {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+      res.send(car);
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+
+      const errorMessage = `Error retrieving car with id ${id}`;
+      sendError(res, errorMessage, 500);
+    });
+};
 
 // Updaten single properties of a single car.
 export const update = (req, res) => {};
