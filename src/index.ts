@@ -1,7 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import routers from './routes/car.routes';
 
-import { dbURL } from 'config/db.config';
+import { dbURL } from './config/db.config';
 
 const PORT = 3000;
 
@@ -18,9 +19,7 @@ mongoose
     process.exit();
   });
 
-app.get('/', (req, res) => {
-  res.send('Hello Cognigy!');
-});
+routers(app);
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
