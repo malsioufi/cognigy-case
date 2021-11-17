@@ -5,7 +5,7 @@ import { sendError } from '../utils';
 export const create = (req: Request, res: Response) => {
   const { body } = req;
   if (!body) {
-    return sendError(res, 'Car content can not be empty');
+    return sendError(res, 'Body can not be empty');
   }
 
   const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
@@ -61,8 +61,44 @@ export const findOne = (req: Request, res: Response) => {
     });
 };
 
-// Updaten single properties of a single car.
-export const update = (req, res) => {};
+export const update = (req: Request, res: Response) => {
+  const { body } = req;
+  if (!body) {
+    return sendError(res, 'Body can not be empty');
+  }
+
+  const { id } = req.params;
+
+  const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
+
+  CarModel.findByIdAndUpdate(
+    id,
+    {
+      brand,
+      model,
+      color,
+      countryOfOrigin,
+      yearOfCreation
+    },
+    { new: true }
+  )
+    .then((car) => {
+      if (!car) {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+      res.send(car);
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+
+      const errorMessage = `Error updating car with id ${id}`;
+      sendError(res, errorMessage, 500);
+    });
+};
 
 // Delete an individual car
 export const remove = (req, res) => {};
