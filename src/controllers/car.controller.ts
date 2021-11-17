@@ -48,6 +48,7 @@ export const findOne = (req: Request, res: Response) => {
         const errorMessage = `Car not found with id ${id}`;
         return sendError(res, errorMessage, 404);
       }
+
       res.send(car);
     })
     .catch((err) => {
@@ -87,6 +88,7 @@ export const update = (req: Request, res: Response) => {
         const errorMessage = `Car not found with id ${id}`;
         return sendError(res, errorMessage, 404);
       }
+
       res.send(car);
     })
     .catch((err) => {
@@ -100,5 +102,25 @@ export const update = (req: Request, res: Response) => {
     });
 };
 
-// Delete an individual car
-export const remove = (req, res) => {};
+export const remove = (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  CarModel.findByIdAndRemove(id)
+    .then((car) => {
+      if (!car) {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+
+      res.send({ message: 'Car deleted successfully!' });
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+        const errorMessage = `Car not found with id ${id}`;
+        return sendError(res, errorMessage, 404);
+      }
+
+      const errorMessage = `Could not delete car with id ${id}`;
+      sendError(res, errorMessage, 500);
+    });
+};
