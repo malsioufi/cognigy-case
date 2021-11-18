@@ -1,0 +1,44 @@
+import express, { Router } from 'express';
+import { connect } from 'mongoose';
+import { dbURL } from './config/db.config';
+
+class App {
+  public app: express.Application;
+  public port: number;
+
+  constructor(appRouter: Router) {
+    this.app = express();
+    this.port = 3000;
+
+    this.connectToDatabase();
+    this.initializeMiddlewares();
+    this.initializeRoutes(appRouter);
+  }
+
+  private connectToDatabase() {
+    connect(dbURL)
+      .then(() => {
+        console.log('Successfully connected to the database');
+      })
+      .catch((err) => {
+        console.log('Could not connect to the database. Exiting now...', err);
+        process.exit();
+      });
+  }
+
+  private initializeMiddlewares() {
+    this.app.use(express.json());
+  }
+
+  private initializeRoutes(appRouter: Router) {
+    this.app.use(appRouter);
+  }
+
+  public listen() {
+    this.app.listen(this.port, () => {
+      console.info(`Example app listening at http://localhost:${this.port}`);
+    });
+  }
+}
+
+export default App;
