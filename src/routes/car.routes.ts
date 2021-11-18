@@ -1,9 +1,10 @@
 import { Router } from 'express';
+import validationMiddleware from '../middlewares/validation.middleware';
 import { create, findAll, findOne, remove, update } from '../controllers/car.controller';
 
 const carRouter = Router();
 
-carRouter.post('/', create);
+carRouter.post('/', validationMiddleware(), create);
 
 carRouter.get('/', findAll);
 

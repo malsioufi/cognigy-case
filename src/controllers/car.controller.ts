@@ -4,15 +4,8 @@ import CarModel from '../models/car.model';
 
 export const create = (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
-  const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
 
-  const car = new CarModel({
-    brand,
-    model,
-    color,
-    countryOfOrigin,
-    yearOfCreation
-  });
+  const car = new CarModel(body);
 
   car
     .save()
@@ -63,19 +56,7 @@ export const update = (req: Request, res: Response, next: NextFunction) => {
 
   const { id } = req.params;
 
-  const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
-
-  CarModel.findByIdAndUpdate(
-    id,
-    {
-      brand,
-      model,
-      color,
-      countryOfOrigin,
-      yearOfCreation
-    },
-    { new: true }
-  )
+  CarModel.findByIdAndUpdate(id, body, { new: true })
     .then((car) => {
       if (!car) {
         const errorMessage = `Car not found with id ${id}`;
