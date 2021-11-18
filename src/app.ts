@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import errorHandlingMiddleware from './middlewares/errorHandling.middleware';
 import { connect } from 'mongoose';
 import { dbURL } from './config/db.config';
 
@@ -13,6 +14,7 @@ class App {
     this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(appRouter);
+    this.initializeErrorHandling();
   }
 
   private connectToDatabase() {
@@ -32,6 +34,10 @@ class App {
 
   private initializeRoutes(appRouter: Router) {
     this.app.use(appRouter);
+  }
+
+  private initializeErrorHandling() {
+    this.app.use(errorHandlingMiddleware);
   }
 
   public listen() {

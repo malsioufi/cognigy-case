@@ -1,13 +1,9 @@
-import { Request, Response } from 'express';
+import { HttpException } from '../exceptions/http.exception';
+import { NextFunction, Request, Response } from 'express';
 import CarModel from '../models/car.model';
-import { sendError } from '../utils';
 
-export const create = (req: Request, res: Response) => {
+export const create = (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
-  if (!body) {
-    return sendError(res, 'Body can not be empty');
-  }
-
   const { brand, model, color, countryOfOrigin, yearOfCreation } = body;
 
   const car = new CarModel({
@@ -20,53 +16,50 @@ export const create = (req: Request, res: Response) => {
 
   car
     .save()
-    .then((data) => {
-      res.send(data);
+    .then((createdCar) => {
+      res.status(201).json(createdCar);
     })
     .catch((err) => {
       const errorMessage = err.message || 'Some error occurred while creating the Car.';
-      sendError(res, errorMessage, 500);
+      next(new HttpException(errorMessage, 500));
     });
 };
 
-export const findAll = (req: Request, res: Response) => {
+export const findAll = (req: Request, res: Response, next: NextFunction) => {
   CarModel.find()
     .then((cars) => {
-      res.send(cars);
+      res.status(200).json(cars);
     })
     .catch((err) => {
       const errorMessage = err.message || 'Some error occurred while retrieving cars.';
-      sendError(res, errorMessage, 500);
+      next(new HttpException(errorMessage, 500));
     });
 };
 
-export const findOne = (req: Request, res: Response) => {
+export const findOne = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   CarModel.findById(id)
     .then((car) => {
       if (!car) {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        res.status(200).json(car);
       }
-
-      res.send(car);
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        const errorMessage = `Error retrieving car with id ${id}`;
+        next(new HttpException(errorMessage, 500));
       }
-
-      const errorMessage = `Error retrieving car with id ${id}`;
-      sendError(res, errorMessage, 500);
     });
 };
 
-export const update = (req: Request, res: Response) => {
+export const update = (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
-  if (!body) {
-    return sendError(res, 'Body can not be empty');
-  }
 
   const { id } = req.params;
 
@@ -86,41 +79,41 @@ export const update = (req: Request, res: Response) => {
     .then((car) => {
       if (!car) {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        res.status(200).json(car);
       }
-
-      res.send(car);
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        const errorMessage = `Error updating car with id ${id}`;
+        next(new HttpException(errorMessage, 500));
       }
-
-      const errorMessage = `Error updating car with id ${id}`;
-      sendError(res, errorMessage, 500);
     });
 };
 
-export const remove = (req: Request, res: Response) => {
+export const remove = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   CarModel.findByIdAndRemove(id)
     .then((car) => {
       if (!car) {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        res.status(200).json({ message: 'Car deleted successfully!' });
       }
-
-      res.send({ message: 'Car deleted successfully!' });
     })
     .catch((err) => {
       if (err.kind === 'ObjectId' || err.name === 'NotFound') {
         const errorMessage = `Car not found with id ${id}`;
-        return sendError(res, errorMessage, 404);
+        next(new HttpException(errorMessage, 404));
+      } else {
+        const errorMessage = `Could not delete car with id ${id}`;
+        next(new HttpException(errorMessage, 500));
       }
-
-      const errorMessage = `Could not delete car with id ${id}`;
-      sendError(res, errorMessage, 500);
     });
 };
