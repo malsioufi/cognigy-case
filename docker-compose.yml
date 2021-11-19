@@ -7,3 +7,23 @@ services:
     restart: always
     ports:
       - 27017:27017
+    networks:
+      - backend
+
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: server
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    networks:
+      - backend
+    depends_on:
+      - mongo
+networks:
+  backend:
+    driver: bridge

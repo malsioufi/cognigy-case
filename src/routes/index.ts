@@ -3,6 +3,6 @@ import carRouter from './car.routes';
 
 const appRouter = Router();
 
-appRouter.use('/car', carRouter);
+appRouter.use('/cars', carRouter);
 
 export default appRouter;
