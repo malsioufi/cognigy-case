@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
 import errorHandlingMiddleware from './middlewares/errorHandling.middleware';
 import { connect } from 'mongoose';
-import { dbURL } from './config/db.config';
-import { port } from './config/app.config';
+import { dbURL } from './configs/db.config';
+import { port } from './configs/app.config';
 
 class App {
   public app: express.Application;

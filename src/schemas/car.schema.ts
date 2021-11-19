@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { Car } from './types';
+import { Car, RquiredCarValidationFields } from './types';
 
 const carMongooseSchema = new Schema<Car>(
   {
@@ -14,10 +14,10 @@ const carMongooseSchema = new Schema<Car>(
   }
 );
 
-export const carJsonSchema = {
+export const getCarJsonSchema = (required: RquiredCarValidationFields) => ({
   $schema: 'http://json-schema.org/draft-07/schema',
   type: 'object',
-  required: ['brand', 'model', 'color'],
+  required,
   properties: {
     brand: {
       type: 'string',
@@ -45,6 +45,6 @@ export const carJsonSchema = {
     }
   },
   additionalProperties: false
-};
+});
 
 export default carMongooseSchema;

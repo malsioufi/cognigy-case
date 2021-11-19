@@ -1,16 +1,16 @@
 import { Router } from 'express';
-import validationMiddleware from '../middlewares/validation.middleware';
+import carValidationMiddleware from '../middlewares/car-validation.middleware';
 import { create, findAll, findOne, remove, update } from '../controllers/car.controller';
 
 const carRouter = Router();
 
-carRouter.post('/', validationMiddleware(), create);
+carRouter.post('/', carValidationMiddleware(), create);
 
 carRouter.get('/', findAll);
 
 carRouter.get('/:id', findOne);
 
-carRouter.put('/:id', update);
+carRouter.put('/:id', carValidationMiddleware([]), update);
 
 carRouter.delete('/:id', remove);
 
