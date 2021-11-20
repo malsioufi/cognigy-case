@@ -63,6 +63,8 @@ You can access the API documentation on `/api-docs`
 
 * Add unit tests in addition to the current E2E ones.
 * Add `x-api-key` based authentication.
+* Add logging to the server.
+* Add monitoring metrics to track the server's health.
 
 
 ## Cognigy's Checklist
