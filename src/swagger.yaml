@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Cars API
+  description: Technical test for backend developer role at Cognigy.
+  contact:
+    name: Mohamad Alsioufi
+    email: malsioufi@outlook.com
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: http://localhost:3001
+    description: Production server
+tags:
+- name: cars
+  description: cars operations
+
+paths:
+# [GET] cars
+  /cars:
+    get:
+      tags:
+      - cars
+      summary: Find all cars
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [GET] cars/id
+  /cars/{id}:
+    get:
+      tags:
+      - cars
+      summary: Find car by its id
+      parameters:
+      - $ref: "#/components/parameters/CarId"
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+# [POST] cars
+    post:
+      tags:
+      - cars
+      summary: Add a new car
+      requestBody:
+        description: car data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertCar'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        500:
+          description: 'Server Error'
+
+# [PUT] cars/id
+    put:
+      tags:
+      - cars
+      summary: Update car by id
+      parameters:
+      - $ref: "#/components/parameters/CarId"
+      requestBody:
+        description: car Data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCar'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+# [DELETE] cars/id
+    delete:
+      tags:
+      - cars
+      summary: Delete car by id
+      parameters:
+      - $ref: "#/components/parameters/CarId"
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+# components
+components:
+  parameters:
+    CarId:
+      name: id
+      schema:
+        type: string
+      in: path
+      description: Car id in MongoDB
+      required: true
+  schemas:
+    InsertCar:
+      allOf:
+        - $ref: '#/components/schemas/CarProperties'
+        - required:
+            - brand
+            - model
+            - color
+    UpdateCar:
+      $ref: '#/components/schemas/CarProperties'
+    CarProperties:
+      type: object
+      properties:
+        brand:
+          type: string
+          description: car brand
+          minLength: 3
+          maxLength: 50
+        model:
+          type: string
+          description: car model
+          minLength: 3
+          maxLength: 50
+        color:
+          type: string
+          description: car color
+          minLength: 3
+          maxLength: 50
+        countryOfOrigin:
+          type: string
+          description: car country of origin
+          minLength: 2
+          maxLength: 50
+        yearOfCreation:
+          type: integer
+          description: car year of creation
+          minimum: 1886
+

@@ -8,8 +8,9 @@
   },
   "scripts": {
     "start": "node dist/server.js",
-    "watch": "ts-node-dev --rs --respawn src/server.ts",
-    "build": "npm run lint && npm test && npm run build:ts",
+    "watch": "ts-node-dev --rs --respawn --watch src/swagger.yaml src/server.ts",
+    "build": "npm run lint && npm test && npm run build:ts && npm run build:copy-swagger-specs",
+    "build:copy-swagger-specs": "cp src/swagger.yaml dist/",
     "build:ts": "tsc",
     "lint": "eslint src --ext .js,.ts --ignore-path .gitignore",
     "test": "jest",
@@ -22,6 +23,8 @@
     "@types/jest": "27.0.3",
     "@types/node": "16.11.7",
     "@types/supertest": "2.0.11",
+    "@types/swagger-ui-express": "4.1.3",
+    "@types/yamljs": "0.2.31",
     "@typescript-eslint/eslint-plugin": "5.4.0",
     "@typescript-eslint/parser": "5.4.0",
     "eslint": "8.2.0",
@@ -38,6 +41,8 @@
   "dependencies": {
     "ajv": "8.8.1",
     "express": "4.17.1",
-    "mongoose": "6.0.13"
+    "mongoose": "6.0.13",
+    "swagger-ui-express": "4.1.6",
+    "yamljs": "0.3.0"
   }
 }
