@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import errorHandlingMiddleware from './middlewares/errorHandling.middleware';
+import errorHandlingMiddleware from './middlewares/error-handling.middleware';
 import { connect } from 'mongoose';
 import { dbURL } from './configs/db.config';
 import { port } from './configs/app.config';
