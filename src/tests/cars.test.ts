@@ -8,6 +8,7 @@ import CarModel from '../models/car.model';
 import { Car } from '../schemas/types';
 import { MOCK_DATA } from './cars.mock';
 import { dbName, dbPort } from '../configs/db.config';
+import { API_KEY, API_KEY_HEADER } from '../configs/app.config';
 
 describe('cars', () => {
   let app: Express.Application;
@@ -32,9 +33,8 @@ describe('cars', () => {
       it('should return a 200 and empty array given db is empty', async () => {
         const expectedStatus = 200;
         const expectedBody = [];
-
         // when
-        await supertest(app).get(`/cars`).expect(expectedStatus, expectedBody);
+        await supertest(app).get(`/cars`).set(API_KEY_HEADER, API_KEY).expect(expectedStatus, expectedBody);
       });
 
       it('should return a 200 and available records given db is not empty', async () => {
@@ -45,9 +45,39 @@ describe('cars', () => {
         const expectedBody = [MOCK_DATA[0], MOCK_DATA[1]];
 
         // when
-        const { statusCode: actualStatusCode, body } = await supertest(app).get(`/cars`);
+        const { statusCode: actualStatusCode, body } = await supertest(app).get(`/cars`).set(API_KEY_HEADER, API_KEY);
         const actualBody = body.map((car) => stripExtraMongoProperties(car));
 
+        // then
+        expect(actualStatusCode).toBe(expectedStatusCode);
+        expect(actualBody).toEqual(expectedBody);
+      });
+
+      it('should return a 403 and an error message when API-Key is not provided', async () => {
+        // given
+        insertRecords([MOCK_DATA[0], MOCK_DATA[1]]);
+
+        const expectedStatusCode = 403;
+        const expectedBody = { message: 'x-api-key is not provided' };
+
+        // when
+        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app).get(`/cars`);
+        // then
+        expect(actualStatusCode).toBe(expectedStatusCode);
+        expect(actualBody).toEqual(expectedBody);
+      });
+
+      it('should return a 401 and an error message when providing invalid API-Key', async () => {
+        // given
+        insertRecords([MOCK_DATA[0], MOCK_DATA[1]]);
+
+        const expectedStatusCode = 401;
+        const expectedBody = { message: 'x-api-key is invlid' };
+
+        // when
+        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
+          .get(`/cars`)
+          .set(API_KEY_HEADER, 'JustAnotherKey');
         // then
         expect(actualStatusCode).toBe(expectedStatusCode);
         expect(actualBody).toEqual(expectedBody);
@@ -66,7 +96,9 @@ describe('cars', () => {
         insertRecords([MOCK_DATA[1], MOCK_DATA[2]]);
 
         // when
-        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app).get(`/cars/${carId}`);
+        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
+          .get(`/cars/${carId}`)
+          .set(API_KEY_HEADER, API_KEY);
 
         // then
         expect(actualStatusCode).toBe(expectedStatus);
@@ -82,7 +114,9 @@ describe('cars', () => {
         insertRecords([MOCK_DATA[1], MOCK_DATA[2]]);
 
         // when
-        const { statusCode: actualStatusCode, body } = await supertest(app).get(`/cars/${carId}`);
+        const { statusCode: actualStatusCode, body } = await supertest(app)
+          .get(`/cars/${carId}`)
+          .set(API_KEY_HEADER, API_KEY);
         const actualBody = stripExtraMongoProperties(body);
 
         // then
@@ -100,7 +134,10 @@ describe('cars', () => {
         const expectedBody = mockCarWithoutId;
 
         // when
-        const { statusCode: actualStatusCode, body } = await supertest(app).post(`/cars`).send(mockCarWithoutId);
+        const { statusCode: actualStatusCode, body } = await supertest(app)
+          .post(`/cars`)
+          .set(API_KEY_HEADER, API_KEY)
+          .send(mockCarWithoutId);
         const actualBody = stripExtraMongoProperties(body, true);
 
         // then
@@ -114,7 +151,10 @@ describe('cars', () => {
         const expectedBody = mockCarWithoutCountry;
 
         // when
-        const { statusCode: actualStatusCode, body } = await supertest(app).post(`/cars`).send(mockCarWithoutCountry);
+        const { statusCode: actualStatusCode, body } = await supertest(app)
+          .post(`/cars`)
+          .set(API_KEY_HEADER, API_KEY)
+          .send(mockCarWithoutCountry);
         const actualBody = stripExtraMongoProperties(body, true);
 
         // then
@@ -129,6 +169,7 @@ describe('cars', () => {
         // when
         const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
           .post(`/cars`)
+          .set(API_KEY_HEADER, API_KEY)
           .send(MOCK_DATA[2]);
 
         // then
@@ -144,6 +185,7 @@ describe('cars', () => {
         // when
         const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
           .post(`/cars`)
+          .set(API_KEY_HEADER, API_KEY)
           .send(mockCarWithoutRequiredProperty);
 
         // then
@@ -168,6 +210,7 @@ describe('cars', () => {
         // when
         const { statusCode: actualStatusCode, body } = await supertest(app)
           .put(`/cars/${_id}`)
+          .set(API_KEY_HEADER, API_KEY)
           .send({ brand: updatedBrand });
         const actualBody = stripExtraMongoProperties(body, true);
 
@@ -187,6 +230,7 @@ describe('cars', () => {
         // when
         const { statusCode: actualStatusCode, body } = await supertest(app)
           .put(`/cars/${carId}`)
+          .set(API_KEY_HEADER, API_KEY)
           .send({ brand: 'updatedBrand' });
         const actualBody = stripExtraMongoProperties(body, true);
 
@@ -205,6 +249,7 @@ describe('cars', () => {
         // when
         const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
           .put(`/cars/${MOCK_DATA[2]._id}`)
+          .set(API_KEY_HEADER, API_KEY)
           .send({ additionalProperty: 'testValue' });
 
         // then
@@ -224,9 +269,9 @@ describe('cars', () => {
         const expectedBody = { message: 'Car deleted successfully!' };
 
         // when
-        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app).delete(
-          `/cars/${MOCK_DATA[0]._id}`
-        );
+        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
+          .delete(`/cars/${MOCK_DATA[0]._id}`)
+          .set(API_KEY_HEADER, API_KEY);
 
         // then
         expect(actualStatusCode).toBe(expectedStatus);
@@ -242,7 +287,9 @@ describe('cars', () => {
         insertRecords([MOCK_DATA[0], MOCK_DATA[1], MOCK_DATA[2]]);
 
         // when
-        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app).delete(`/cars/${carId}`);
+        const { statusCode: actualStatusCode, body: actualBody } = await supertest(app)
+          .delete(`/cars/${carId}`)
+          .set(API_KEY_HEADER, API_KEY);
 
         // then
         expect(actualStatusCode).toBe(expectedStatus);

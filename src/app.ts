@@ -19,8 +19,8 @@ class App {
 
     this.connectToDatabase();
     this.initializeMiddlewares();
-    this.initializeRoutes(appRouter);
     this.initializeSwagger();
+    this.initializeRoutes(appRouter);
     this.initializeErrorHandling();
   }
 

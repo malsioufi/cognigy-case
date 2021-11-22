@@ -62,7 +62,9 @@ You can access the API documentation on `/api-docs`
 ## Future Improvements
 
 * Add unit tests in addition to the current E2E ones.
-* Add `x-api-key` based authentication.
+* ~~Add `x-api-key` based authentication.~~
+* Add more tests for `x-api-key` based authentication to cover all cases.
+* Add a service to manage API keys in the database.
 * Add logging to the server.
 * Add monitoring metrics to track the server's health.
 
