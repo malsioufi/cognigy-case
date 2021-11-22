@@ -1,5 +1,5 @@
 import Ajv, { ErrorObject } from 'ajv';
-import { RequestHandler } from 'express';
+import { RequestHandler, NextFunction, Request, Response } from 'express';
 
 import { HttpException } from '../exceptions/http.exception';
 import { getCarJsonSchema } from '../schemas/car.schema';
@@ -13,7 +13,7 @@ const carValidationMiddleware = (
   const carJsonSchema = getCarJsonSchema(requiredFields);
   const validate = ajv.compile(carJsonSchema);
 
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     const valid = validate(body);
     if (!valid) {
